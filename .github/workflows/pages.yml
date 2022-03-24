@@ -1,0 +1,33 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+    - main
+jobs:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v3
+
+    - name: Install Rust 🦀
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: wasm32-unknown-unknown
+
+    - name: Grab Just 🤖
+      uses: extractions/setup-just@v1
+      with:
+        just-version: '0.10'
+
+    - name: Build 🔧
+      run: |
+        just build-web-release
+
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@v4.2.5
+      with:
+        branch: gh-pages
+        folder: dist
