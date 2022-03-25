@@ -22,7 +22,8 @@ jobs:
         toolchain: stable
         target: wasm32-unknown-unknown
 
-    - uses: Swatinem/rust-cache@v1
+    - name: Cache 🗄️
+      uses: Swatinem/rust-cache@v1
 
     - name: Build 🔧
       run: |
