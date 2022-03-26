@@ -1,2 +1,4 @@
 /target
 /dist
+/shaders/sky-shader/target
+/shaders/sky-shader/Cargo.lock
