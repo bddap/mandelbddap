@@ -181,3 +181,8 @@ fn canvas_of_apropriate_size() -> Image {
     }
     Image::gen_image_color(w as u16, h as u16, BLACK)
 }
+
+const SKY_SHADER_VERTEX: &str =
+    include_str!(concat!(env!("OUT_DIR"), "/shaders/sky-shader-main_vs.glsl"));
+const SKY_SHADER_FRAGMENT: &str =
+    include_str!(concat!(env!("OUT_DIR"), "/shaders/sky-shader-main_fs.glsl"));

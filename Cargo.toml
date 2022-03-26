@@ -10,3 +10,10 @@ license = "MIT OR Apache-2.0"
 colorgrad = "0.5.0"
 macroquad = "0.3.15"
 num = "0.4.0"
+
+[build-dependencies]
+sanitize-filename = "0.3.0"
+spirv-builder = { git = "https://github.com/EmbarkStudios/rust-gpu.git", rev = "a75d6e31c1350404570c5b8bc4ac3f5a21cd2a23" }
+spirv_cross = { version = "0.23.1", features = ["hlsl", "msl", "glsl"] }
+
+[features]

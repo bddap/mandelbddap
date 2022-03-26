@@ -1,0 +1,11 @@
+[package]
+name = "shared"
+version = "0.4.0-alpha.12"
+authors = ["Embark <opensource@embark-studios.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+spirv-std = { git = "https://github.com/EmbarkStudios/rust-gpu.git", rev = "a75d6e31c1350404570c5b8bc4ac3f5a21cd2a23", features = ["glam"] }
+bytemuck = { version = "1.6.3", features = ["derive"] }
