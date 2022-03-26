@@ -78,6 +78,20 @@ name = "bytemuck"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0e851ca7c24871e7336801608a4797d7376545b6928a10d32d75685687141ead"
+dependencies = [
+ "bytemuck_derive",
+]
+
+[[package]]
+name = "bytemuck_derive"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e215f8c2f9f79cb53c8335e687ffd07d5bfcb6fe5fc80723762d0be46e7cc54"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "byteorder"
@@ -206,6 +220,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "333928d5eb103c5d4050533cec0384302db6be8ef7d3cebd30ec6a35350353da"
 
 [[package]]
+name = "glam"
+version = "0.20.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e4fa84eead97d5412b2a20aed4d66612a97a9e41e08eababdb9ae2bf88667490"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "hashbrown"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -324,7 +347,7 @@ checksum = "e69f39283065a2ebea3ae41294a44a9d61951d255917bdcc9ada0ec97612499f"
 dependencies = [
  "bumpalo",
  "fontdue",
- "glam",
+ "glam 0.14.0",
  "image",
  "macroquad_macro",
  "miniquad",
@@ -346,6 +369,7 @@ dependencies = [
  "macroquad",
  "num",
  "sanitize-filename",
+ "shared",
  "spirv-builder",
  "spirv_cross",
 ]
@@ -828,6 +852,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "shared"
+version = "0.4.0-alpha.12"
+dependencies = [
+ "bytemuck",
+ "spirv-std",
+]
+
+[[package]]
 name = "siphasher"
 version = "0.3.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -871,6 +903,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "spirv-std"
+version = "0.4.0-alpha.12"
+source = "git+https://github.com/EmbarkStudios/rust-gpu.git?rev=a75d6e31c1350404570c5b8bc4ac3f5a21cd2a23#a75d6e31c1350404570c5b8bc4ac3f5a21cd2a23"
+dependencies = [
+ "bitflags",
+ "glam 0.20.2",
+ "num-traits",
+ "spirv-std-macros",
+ "spirv-types",
+]
+
+[[package]]
+name = "spirv-std-macros"
+version = "0.4.0-alpha.12"
+source = "git+https://github.com/EmbarkStudios/rust-gpu.git?rev=a75d6e31c1350404570c5b8bc4ac3f5a21cd2a23#a75d6e31c1350404570c5b8bc4ac3f5a21cd2a23"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "spirv-types",
+ "syn",
+]
+
+[[package]]
 name = "spirv-tools"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -887,6 +942,11 @@ checksum = "2980b0b4b2a9b5edfeb1dc8a35e84aac07b9c6dcd2339cce004d9355fb62a59d"
 dependencies = [
  "cc",
 ]
+
+[[package]]
+name = "spirv-types"
+version = "0.4.0-alpha.12"
+source = "git+https://github.com/EmbarkStudios/rust-gpu.git?rev=a75d6e31c1350404570c5b8bc4ac3f5a21cd2a23#a75d6e31c1350404570c5b8bc4ac3f5a21cd2a23"
 
 [[package]]
 name = "spirv_cross"

@@ -2,67 +2,166 @@ use std::iter::repeat_with;
 
 use macroquad::prelude::*;
 use num::{complex::Complex32, Complex};
+use shared::ShaderConstants;
 
 #[macroquad::main("Mandelbddap")]
 async fn main() {
-    let mut hw = (screen_height(), screen_width());
-    // let mut image = get_screen_data();
-    let mut image = canvas_of_apropriate_size();
-    let mut gradid: usize = 0;
-    let mut mb = MandelBrot {
-        colorgrad: GRADIENTS[gradid % GRADIENTS.len()](),
-        iter_max: 100,
-        mouse_pos: Complex::new(0.0, 0.0),
-        zoom: 0.5 / 2.0,
-    };
+    let mut mb = MandelBrot::new();
+
+    let sky = Sky::new();
 
     loop {
         if is_key_pressed(KeyCode::Q) {
             return;
         }
+
+        // mb.fit_to_screen();
+        // mb.take_user_input();
+        // mb.draw();
+
+        sky.draw();
+
+        next_frame().await
+    }
+}
+
+struct Sky {
+    material: Material,
+}
+
+impl Sky {
+    fn new() -> Self {
+        let pipeline_params = PipelineParams {
+            depth_write: true,
+            depth_test: Comparison::LessOrEqual,
+            ..Default::default()
+        };
+
+        println!("{}", SKY_SHADER_FRAGMENT);
+        std::process::exit(0);
+
+        let material = load_material(
+            &SKY_SHADER_VERTEX,
+            &SKY_SHADER_FRAGMENT,
+            MaterialParams {
+                pipeline_params,
+                // uniforms: vec![("Center".to_owned(), UniformType::Float2)],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        Self { material }
+    }
+
+    fn draw(&self) {
+        gl_use_material(self.material);
+        draw_triangle(
+            Vec2::new(0.0, 0.0),
+            Vec2::new(screen_width(), 0.0),
+            Vec2::new(0.0, screen_height()),
+            PURPLE,
+        );
+        // draw_circle(
+        //     screen_width() / 2.0,
+        //     screen_height() / 2.0,
+        //     screen_height().min(screen_width()) / 4.0,
+        //     PURPLE,
+        // );
+        gl_use_default_material();
+    }
+}
+
+pub fn load_material_a(
+    vertex_shader: &str,
+    fragment_shader: &str,
+    params: MaterialParams,
+) -> Result<Material, ShaderError> {
+    let context = &mut get_context();
+
+    let pipeline = context.gl.make_pipeline(
+        &mut context.quad_context,
+        vertex_shader,
+        fragment_shader,
+        params.pipeline_params,
+        params.uniforms,
+        params.textures,
+    )?;
+
+    Ok(Material { pipeline })
+}
+
+struct MandelBrot {
+    colorgrad: colorgrad::Gradient,
+    iter_max: usize,
+    mouse_pos: Complex32,
+    zoom: f32,
+    image: Image,
+    hw: (f32, f32),
+    gradid: usize,
+}
+
+impl MandelBrot {
+    fn new() -> Self {
+        MandelBrot {
+            colorgrad: GRADIENTS[0](),
+            iter_max: 100,
+            mouse_pos: Complex::new(0.0, 0.0),
+            zoom: 0.5 / 2.0,
+            image: canvas_of_apropriate_size(),
+            hw: (screen_height(), screen_width()),
+            gradid: 0,
+        }
+    }
+
+    fn take_user_input(&mut self) {
         if is_key_pressed(KeyCode::W) {
-            mb.zoom *= 0.9;
+            self.zoom *= 0.9;
         }
         if is_key_pressed(KeyCode::E) {
-            mb.zoom *= 1.1;
+            self.zoom *= 1.1;
         }
         if is_key_pressed(KeyCode::R) {
-            gradid += 1;
-            mb.colorgrad = GRADIENTS[gradid % GRADIENTS.len()]();
+            self.gradid += 1;
+            self.colorgrad = GRADIENTS[self.gradid % GRADIENTS.len()]();
         }
         if is_key_pressed(KeyCode::A) {
-            mb.iter_max += 1;
+            self.iter_max += 1;
         }
         if is_key_pressed(KeyCode::S) {
-            mb.iter_max = mb.iter_max.saturating_sub(1);
-        }
-
-        let nhw = (screen_height(), screen_width());
-        if hw != nhw {
-            image = canvas_of_apropriate_size();
-            hw = nhw;
+            self.iter_max = self.iter_max.saturating_sub(1);
         }
 
         let aspect = screen_width() / screen_height();
         let (mut mx, mut my) = mouse_position();
         mx = mx / screen_width() * 2.0 - 1.0;
         my = (my / screen_height() * 2.0 - 1.0) / aspect;
-        mb.mouse_pos = Complex::new(mx, my);
+        self.mouse_pos = Complex::new(mx, my);
+    }
 
-        let iw = image.width();
+    fn fit_to_screen(&mut self) {
+        let nhw = (screen_height(), screen_width());
+        if self.hw != nhw {
+            self.image = canvas_of_apropriate_size();
+            self.hw = nhw;
+        }
+    }
+
+    fn draw(&mut self) {
+        let aspect = screen_width() / screen_height();
+        let iw = self.image.width();
         let iwf = iw as f32;
-        let ih = image.height();
+        let ih = self.image.height();
         let ihf = ih as f32;
         for x in 0..iw {
             for y in 0..ih {
-                let c = mb.get(
+                let c = self.get(
                     x as f32 / iwf * 2.0 - 1.0,
                     (y as f32 / ihf * 2.0 - 1.0) / aspect,
                 );
-                image.set_pixel(x as u32, y as u32, c);
+                self.image.set_pixel(x as u32, y as u32, c);
             }
         }
-        let tex = Texture2D::from_image(&image);
+        let tex = Texture2D::from_image(&self.image);
 
         draw_texture_ex(
             tex,
@@ -74,19 +173,8 @@ async fn main() {
                 ..DrawTextureParams::default()
             },
         );
-
-        next_frame().await
     }
-}
 
-struct MandelBrot {
-    colorgrad: colorgrad::Gradient,
-    iter_max: usize,
-    mouse_pos: Complex32,
-    zoom: f32,
-}
-
-impl MandelBrot {
     fn get(&self, x: f32, y: f32) -> Color {
         let ogy = y;
         let x = x / self.zoom;
