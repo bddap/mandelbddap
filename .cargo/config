@@ -1,0 +1,2 @@
+[alias]
+wasm = "run --release --package cargo-wasm --"

@@ -1,5 +1,10 @@
 What if Mandelbrot set, but different.
 
+You can try out this program in the browser with `cargo wasm serve` or you can
+run naitively using `cargo run`.
+
+`cargo wasm` is an alias in `.cargo/config` by the way, in case you were wondering.
+
 ## License
 
 Licensed under either of

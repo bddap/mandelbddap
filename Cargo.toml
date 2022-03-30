@@ -7,6 +7,42 @@ license = "MIT OR Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-colorgrad = "0.5.0"
-macroquad = "0.3.15"
-num = "0.4.0"
+log = "0.4.16"
+winit = "0.26.1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2.45"
+console_log = "0.2"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies.web_sys]
+package = "web-sys"
+version = "0.3.22"
+features = [
+    'console',
+    "AddEventListenerOptions",
+    'CssStyleDeclaration',
+    'BeforeUnloadEvent',
+    'Document',
+    'DomRect',
+    'Element',
+    'Event',
+    'EventTarget',
+    'FocusEvent',
+    'HtmlCanvasElement',
+    'HtmlElement',
+    'KeyboardEvent',
+    'MediaQueryList',
+    'MediaQueryListEvent',
+    'MouseEvent',
+    'Node',
+    'PointerEvent',
+    'Window',
+    'WheelEvent'
+]
+
+[workspace]
+members = [
+    "cargo-wasm",
+]
+
+[features]

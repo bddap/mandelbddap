@@ -1,0 +1,12 @@
+[package]
+name = "cargo-wasm"
+version = "0.1.0"
+edition = "2021"
+description = "A tool for building or running the project for web. Heavily inspired by https://github.com/rukai/cargo-run-wasm"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+devserver_lib = { version = "0.4.1", default_features = false }
+structopt = "0.3.26"
+wasm-bindgen-cli-support = "0.2.78"
