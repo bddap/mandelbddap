@@ -1,2 +1,9 @@
 [alias]
 wasm = "run --release --package cargo-wasm --"
+
+# This would be required if we were actually building for webgpu
+# on the web, but instead we use the wgpu feature "webgl"
+# [build]
+# rustflags = [
+#     "--cfg=web_sys_unstable_apis",
+# ]

@@ -42,7 +42,14 @@ impl Build {
 
         let profile = if self.release { "release" } else { "debug" };
 
-        let mut cargo_args = vec!["build", "--target", "wasm32-unknown-unknown"];
+        let mut cargo_args = vec![
+            "build",
+            "--target",
+            "wasm32-unknown-unknown",
+            // compiling into a separate target dir makes incremental builds faster
+            "--target-dir",
+            "target/wasm-separate-target",
+        ];
         if self.release {
             cargo_args.push("--release");
         }
@@ -56,7 +63,7 @@ impl Build {
         }
 
         // run wasm-bindgen on wasm file output by cargo, write to the destination folder
-        let wasm_source = Path::new("target/wasm32-unknown-unknown")
+        let wasm_source = Path::new("target/wasm-separate-target/wasm32-unknown-unknown")
             .join(profile)
             .join(format!("{PROGRAM_NAME}.wasm"));
 
