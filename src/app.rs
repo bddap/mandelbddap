@@ -96,6 +96,12 @@ pub async fn run(event_loop: EventLoop<()>, window: Window) {
                 // On macos the window needs to be redrawn manually after resizing
                 window.request_redraw();
             }
+            Event::WindowEvent {
+                event: WindowEvent::CursorMoved { position, .. },
+                ..
+            } => {
+                log::debug!("{:?}", position);
+            }
             Event::RedrawRequested(_) => {
                 let frame = surface
                     .get_current_texture()
@@ -135,15 +141,30 @@ pub async fn run(event_loop: EventLoop<()>, window: Window) {
 }
 
 const SHADER: &str = "
+struct Input {
+  cursor : vec2<f32>;
+};
+
+[[group(0), binding(0)]] var<uniform> input : Input;
+
+struct VertexOutput {
+    [[location(0)]] tex_coord: vec2<f32>;
+    [[builtin(position)]] position: vec4<f32>;
+};
+
 [[stage(vertex)]]
-fn vs_main([[builtin(vertex_index)]] in_vertex_index: u32) -> [[builtin(position)]] vec4<f32> {
+fn vs_main([[builtin(vertex_index)]] in_vertex_index: u32) -> VertexOutput {
+    var out: VertexOutput;
     let x = f32(i32(in_vertex_index) - 1);
     let y = f32(i32(in_vertex_index & 1u) * 2 - 1);
-    return vec4<f32>(x, y, 0.0, 1.0);
+    out.position = vec4<f32>(x, y, 0.0, 1.0);
+    out.tex_coord = vec2<f32>(x, y);
+    return out;
 }
 
 [[stage(fragment)]]
-fn fs_main() -> [[location(0)]] vec4<f32> {
-    return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+fn fs_main(in: VertexOutput) -> [[location(0)]] vec4<f32> {
+    // return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+    return vec4<f32>((in.tex_coord + vec2<f32>(1.0, 1.0)) / 2.0, 0.0, 1.0);
 }
 ";
