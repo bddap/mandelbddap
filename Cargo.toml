@@ -33,6 +33,7 @@ features = [
     "Element",
     "Event",
     "EventTarget",
+    "EventTarget",
     "FocusEvent",
     "Gpu",
     "GpuAdapter",
